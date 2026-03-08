@@ -28,8 +28,8 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ResponseInterceptor());
 
   const config = new DocumentBuilder()
-    .setTitle('Mentora Backend API')
-    .setDescription('Production-style mentorship platform API built with NestJS')
+    .setTitle('Mentorshi Platform API')
+    .setDescription('Mentorshi-Platform-BackEnd API documentation')
     .setVersion('1.0.0')
     .addBearerAuth()
     .build();
