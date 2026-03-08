@@ -70,10 +70,10 @@ short summary.
 -   `GET /lessons` with search and pagination
 -   `GET /bookings` with pagination and filters
 -   `GET /lessons/:id/sessions` with pagination
--   `GET /students/:id`
--   `GET /lessons/:id`
--   `POST /sessions/:id/join`
--   `GET /health`
+-   `GET /students/:id.`
+-   `GET /lessons/:id.`
+-   `POST /sessions/:id/join.`
+-   `GET /health.`
 
 ------------------------------------------------------------------------
 
@@ -160,7 +160,7 @@ requirement."}'
 
 -   400 if text is missing
 -   400 if text is shorter than 50 characters
--   413 if text exceeds allowed limit
+-   413 if text exceeds the allowed limit
 -   502 if provider request fails
 
 ------------------------------------------------------------------------
@@ -172,3 +172,4 @@ requirement."}'
 -   Passwords hashed using bcrypt
 -   Role-based authorization
 -   Request validation using DTOs
+-   Rate Limiting (THROTTLE_TTL & THROTTLE_LIMIT)
