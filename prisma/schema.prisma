@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  PARENT
+  MENTOR
+}
+
+model User {
+  id             Int       @id @default(autoincrement())
+  fullName       String
+  email          String    @unique
+  passwordHash   String
+  role           Role
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  students       Student[] @relation("ParentStudents")
+  lessons        Lesson[]  @relation("MentorLessons")
+
+  @@index([role])
+}
+
+model Student {
+  id             Int                   @id @default(autoincrement())
+  fullName       String
+  email          String?               @unique
+  dateOfBirth    DateTime?
+  notes          String?
+  parentId       Int
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+
+  parent         User                  @relation("ParentStudents", fields: [parentId], references: [id], onDelete: Cascade)
+  bookings       Booking[]
+  sessionJoins   SessionParticipant[]
+
+  @@index([parentId])
+  @@index([fullName])
+}
+
+model Lesson {
+  id             Int        @id @default(autoincrement())
+  title          String
+  description    String
+  mentorId       Int
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  mentor         User       @relation("MentorLessons", fields: [mentorId], references: [id], onDelete: Cascade)
+  bookings       Booking[]
+  sessions       Session[]
+
+  @@index([mentorId])
+  @@index([title])
+}
+
+model Booking {
+  id             Int       @id @default(autoincrement())
+  studentId      Int
+  lessonId       Int
+  createdAt      DateTime  @default(now())
+
+  student        Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  lesson         Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, lessonId])
+  @@index([lessonId])
+}
+
+model Session {
+  id             Int                   @id @default(autoincrement())
+  lessonId       Int
+  date           DateTime
+  topic          String
+  summary        String?
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+
+  lesson         Lesson                @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  participants   SessionParticipant[]
+
+  @@index([lessonId])
+  @@index([date])
+}
+
+model SessionParticipant {
+  id             Int       @id @default(autoincrement())
+  sessionId      Int
+  studentId      Int
+  joinedAt       DateTime  @default(now())
+
+  session        Session   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  student        Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, studentId])
+  @@index([studentId])
+}
